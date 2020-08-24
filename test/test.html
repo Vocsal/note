@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <script src="../JS/index.js"></script>
+</head>
+<body>
+    <input id="test-input" type="text">
+    <script>
+        let debounceInput = debounce(function(e) {
+            console.log("debounce", e.target.value);
+        }, 1000)
+        let throttleInput = throttle(function(e) {
+            console.log("throttle", e.target.value);
+        }, 1000)
+        function inputFunc(e) {
+            debounceInput(e);
+            throttleInput(e);
+        }
+        let input = document.getElementById("test-input");
+        input.addEventListener("keyup", inputFunc);
+    </script>
+</body>
+</html>
