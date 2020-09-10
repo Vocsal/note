@@ -164,11 +164,43 @@ function deepClone(obj) {
     return deepCopy(obj);
 }
 
+/**
+ * @param {String} title 通知的标题
+ * @param {Object} optiosn 一些操作项
+ * @return {Object} notification
+ */
+function notify(title, options = {}, closeDelay = 3000) {
+    let notification = null;
+    if(!("Notification" in window)) {
+        console.warn("This browser doesn't support desktop notifications");
+        alert("This browser doesn't support desktop notifications");
+    } else if(Notification.permission === "granted") {
+        notification = new Notification(title, options);
+    } else if(Notification.permission !== "denied") {
+        Notification.requestPermission((permission) => {
+            if(permission === "granted") {
+                notification = new Notification(title, options);
+            } else {
+                console.warn("You need change the permission of notification in browser settting.")
+            }
+        })
+    } else if(Notification.permission === "denied") {
+        console.warn("You need change the permission of notification in browser settting.")
+    }
+    if(notification) {
+        setTimeout(() => {
+            notification.close()
+        }, closeDelay)
+    }
+    return notification;
+}
+
 module.exports = {
     debounce,
     throttle,
     converTime,
     id,
     getType,
-    deepClone
+    deepClone,
+    notify
 }
