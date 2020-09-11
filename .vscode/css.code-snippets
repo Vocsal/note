@@ -1,0 +1,93 @@
+{
+	// Place your note 工作区 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+    "Shadow": {
+        "scope": "css",
+        "prefix": "css shadow",
+        "body": [
+            "box-shadow: 0 1px 6px 0 rgba(32,33,36,.28);$0"
+        ],
+        "description": "CSS 边框阴影样式"
+    },
+
+    "Scrollbar": {
+        "scope": "css",
+        "prefix": "css scrollbar",
+        "body": [
+            " /* 设置滑动条 */",
+            ".${CLIPBOARD:scrollbar} {",
+            "    width: ${1:200px};",
+            "    height: ${2:200px};",
+            "    overflow: auto;",
+            "}",
+            "/* 定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸 */",
+            ".${CLIPBOARD:scrollbar}::-webkit-scrollbar {",
+            "    width: 6px;",
+            "    height: 6px;",
+            "    background-color: #eaeaea;",
+            "}",
+            "/* 定义滚动条的轨道颜色、内阴影及圆角 */",
+            ".${CLIPBOARD:scrollbar}::-webkit-scrollbar-track {",
+            "    border-radius: 10px;",
+            "}",
+            "/* 定义滑块颜色、内阴影及圆角 */",
+            ".${CLIPBOARD:scrollbar}::-webkit-scrollbar-thumb {",
+            "    border-radius: 10px;",
+            "    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);",
+            "    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);",
+            "    background-color: #cccccc;",
+            "}",
+            "/* 下面两个可以不用$0 */",
+            "/* 定义两端按钮的样式 */",
+            ".${CLIPBOARD:scrollbar}::-webkit-scrollbar-button {",
+            "    display: none;",
+            "}",
+            "/* 定义右下角汇合处的样式 */",
+            ".${CLIPBOARD:scrollbar}::-webkit-scrollbar-corner {",
+            "    background: transparent;",
+            "}"
+        ],
+        "description": "CSS 滚动条样式类"
+    },
+
+    "Word Overflow One": {
+        "scope": "css",
+        "prefix": "css word one",
+        "body": [
+            "width: ${1:20rpx};",
+            "white-space: nowrap;",
+            "overflow: hidden;",
+            "text-overflow: ellipsis;$0"
+        ],
+        "description": "CSS 文字超出隐藏并显示省略号 单行"
+    },
+
+    "Word Overflow More": {
+        "scope": "css",
+        "prefix": "css word more",
+        "body": [
+            "width: $[1:20rpx;",
+            "word-break: break-all;",
+            "display: -webkit-box;",
+            "-webkit-line-clamp: 2;",
+            "-webkit-box-orient: vertical;",
+            "overflow: hidden;$0"
+        ],
+        "description": "CSS 文字超出隐藏并显示省略号 多行"
+    }
+
+}
