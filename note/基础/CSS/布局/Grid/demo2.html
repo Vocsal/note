@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Css Grid Demo2</title>
+    <style>
+        body {
+            --container-border-size: 3px;
+            --grid-padding: 8px;
+            --grid-item-size: 120px;
+            --grid-item-gap: 2px;
+        }
+        .container {
+            position: absolute;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-block;
+            border: var(--container-border-size) solid #e0dfcc;
+            border-radius: 10px;
+
+        }
+        .layout-grid {
+            padding: var(--grid-padding);
+            display: grid;
+            grid-template-columns: repeat(3, var(--grid-item-size));
+            grid-template-rows: repeat(3, var(--grid-item-size));
+            grid-column-gap: var(--grid-item-gap);
+            grid-row-gap: var(--grid-item-gap);
+            /* grid-auto-flow: row; */
+            /* grid-auto-flow: row dense; */
+            /* grid-auto-flow: column; */
+            /* grid-auto-flow: column dense; */
+
+            /* justify-items: center;
+            align-items: center; */
+
+            grid-auto-rows: calc(var(--grid-item-size) / 2);
+        }
+        [class^="grid-item"] {
+            text-align: center;
+            line-height: var(--grid-item-size);
+            font-size: 5em;
+        }
+        .grid-item_1, .grid-item_2 {
+            grid-column-start: 1;
+            grid-column-end: 3;
+        }
+        /* .grid-item_8 {
+            grid-row-start: 4;
+            grid-row-end: 5;
+        }
+        .grid-item_9 {
+            grid-row-start: 5;
+            grid-row-end: 6;
+        } */
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="layout-grid" class="layout-grid"></div>
+    </div>
+    <script>
+        // const numArr = [...Array(9).keys()];
+        const colorArr = ["#ef3429", "#f68f25", "#4ba846", "#0476c2", "#c077af", "#f8d29d", "#b4a87f", "#d0e4a8", "#4dc7ec"];
+        const objArr = colorArr.map((color, index) => ({color, index: index+1}));
+        const container = document.getElementById("layout-grid");
+        objArr.forEach(obj => {
+            const dom = document.createElement("div");
+            dom.innerHTML = obj.index;
+            dom.className = "grid-item_" + obj.index;
+            dom.setAttribute("style", `background-color: ${obj.color};`);
+            container.appendChild(dom);
+        })
+    </script>
+</body>
+</html>

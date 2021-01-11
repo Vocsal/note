@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Grid</title>
+    <style>
+        .container {
+            width: 50%;
+            min-width: 150px;
+            margin: 180px auto 0;
+            border: 1px solid #000000;
+        }
+        .layout-grid {
+            width: 100%;
+            padding: 10px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 150px);
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+        }
+        .layout-item {
+            text-align: center;
+            border: 1px dotted red;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="layout-grid" class="layout-grid"></div>
+    </div>
+    <script>
+        // 定义随机排序
+        Array.prototype.randomSort = function() {
+            return this.sort(_ => {
+                return Math.random() > 0.5 ? 1 : -1;
+            })
+        }
+
+        const data = ["一", "一二", "一二三", "一二三四", "一二三四五", "一二三四五六", "一二三四五六七", "一二三四五六七八", "一二三四五六七八九", "一二三四五六七八九十", "一二三四五六七八九十零", "一二三四五六七八九十零一", "一二三四五六七八九十零一二", "一二三四五六七八九十零一二三", "一二三四五六七八九十零一二三四", "一二三四五六七八九十零一二三四五", "一二三四五六七八九十零一二三四五六"];
+        console.log('data', data)
+
+        const container = document.getElementById("layout-grid");
+        console.log('container', container)
+        data
+        .map(str => str.split("").randomSort().join(""))
+        .randomSort()
+        .forEach(str => {
+            let domItem = document.createElement("div");
+            domItem.innerHTML = str;
+            domItem.className = "layout-item";
+            domItem.setAttribute("title", str);
+            container.appendChild(domItem);
+        })
+    </script>
+</body>
+</html>
