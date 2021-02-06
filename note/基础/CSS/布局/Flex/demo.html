@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Flex Layout</title>
+    <style>
+        .container {
+            width: 40%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 250px;
+
+            border: 1px solid #cccccc;
+
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            /* justify-content: space-around; */
+            align-items: center;
+            /* align-items: flex-start; */
+        }
+
+        [class^="flex-item"] {
+            border: 1px solid #aaa;
+            line-height: 1.5em;
+            padding: 0 1em;
+            margin: 1em;
+            max-width: 12em;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container"></div>
+    <script>
+        // 定义随机排序
+        Array.prototype.randomSort = function() {
+            return this.sort(_ => {
+                return Math.random() > 0.5 ? 1 : -1;
+            })
+        }
+        const data = ["一", "一二", "一二三", "一二三四", "一二三四五", "一二三四五六", "一二三四五六七", "一二三四五六七八", "一二三四五六七八九", "一二三四五六七八九十", "一二三四五六七八九十零", "一二三四五六七八九十零一", "一二三四五六七八九十零一二", "一二三四五六七八九十零一二三", "一二三四五六七八九十零一二三四", "一二三四五六七八九十零一二三四五", "一二三四五六七八九十零一二三四五六"];
+        console.log('data', data)
+
+        const app = document.getElementById("app");
+        data
+            .map(str => str.split("").randomSort().join(""))
+            .randomSort()
+            .forEach((str, index) => {
+                const dom = document.createElement("div");
+                dom.className = "flex-item_" + index;
+                // dom.style.order = str.length;
+                dom.setAttribute("title", str);
+                dom.textContent = str;
+                app.appendChild(dom);
+            })
+    </script>
+</body>
+</html>
