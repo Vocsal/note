@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Demo</title>
+    <script src="../js/three.js" type="text/javascript"></script>
+</head>
+<body onload="init()">
+    <script>
+        function init() {
+            // 环境光绘制
+            ambientLightDraw();
+            // 点光源绘制
+            pointLightDraw();
+            // 平行光绘制
+            directionalLightDraw();
+            // 聚光灯绘制
+            spotLightDraw();
+        }
+        function draw(light, callback) {
+            // light 光源
+            const renderer = new THREE.WebGLRenderer();
+            document.body.appendChild(renderer.domElement);
+            renderer.setSize(600, 450);
+            renderer.setClearColor(0x000000);
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-20, 20, 15, -15, 1, 100);
+            camera.position.set(50, 50, 50);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+
+            // 添加光源
+            scene.add(light);
+
+            // 添加物体
+            const mesh = new THREE.Mesh(
+                new THREE.CubeGeometry(10, 10, 10),
+                new THREE.MeshLambertMaterial({
+                    color: 0x00ff00,
+                    // ambient: 0xff0000,
+                })
+            );
+            scene.add(mesh);
+
+            callback && callback(scene, mesh);
+
+            renderer.render(scene, camera);
+        }
+
+        function ambientLightDraw() {
+            const light = new THREE.AmbientLight(0xffffff);
+            draw(light);
+        }
+
+        function pointLightDraw() {
+            const light = new THREE.PointLight(0xffffff);
+            light.position.set(10, 20, 20);
+            draw(light);
+        }
+
+        function directionalLightDraw() {
+            const light = new THREE.DirectionalLight(0xffffff);
+            light.position.set(10, 20, 20);
+            draw(light);
+        }
+
+        function spotLightDraw() {
+            const light = new THREE.SpotLight(0xffffff, 1, 100, Math.PI / 8);
+            light.position.set(20, 20, 20);
+            // light.target.position.set(0, 0, 0);
+            draw(light, function(scene, mesh) {
+                light.target = mesh;
+                const plane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(20, 20),
+                    mesh.material
+                )
+                // plane.rotation.x = Math.PI / 2;
+                plane.position.z = -5;
+                scene.add(plane);
+            });
+        }
+    </script>
+</body>
+</html>

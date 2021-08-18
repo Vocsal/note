@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Demo</title>
+    <script src="../js/three.js" type="text/javascript"></script>
+</head>
+<body onload="init()" style="margin:0px; overflow: hidden;">
+    <script>
+        var draw = {};
+        function init() {
+            drawInit();
+            run();
+            // run2();
+        }
+        function drawInit() {
+            const renderer = new THREE.WebGLRenderer();
+            document.body.appendChild(renderer.domElement);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000);
+            window.addEventListener("resize", function() {
+                draw.resizeTimeout && clearTimeout(draw.resizeTimeout);
+                draw.resizeTimeout = setTimeout(function() {
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                }, 300);
+            })
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-20, 20, 15, -15, 1, 100);
+            camera.position.set(50, 50, 50);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+            const light = new THREE.PointLight();
+            light.position.set(20, 20, 20);
+            scene.add(light);
+
+            // const torusGeometry = new THREE.TorusGeometry(10, 3, 256, 48);
+            const torusGeometry = new THREE.TorusKnotGeometry(10, 3, 256, 48);
+            const torusMaterial = new THREE.MeshLambertMaterial({
+                color: 0x49ef4,
+                fog: true,
+            })
+
+            const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+            scene.add(torus);
+
+            Object.assign(draw, { renderer, scene, camera, light, torus, torusGeometry, torusMaterial });
+        }
+        function drawTorus(callback = () => {}) {
+            const { renderer, scene, camera, torus } = draw;
+            callback(torus);
+            renderer.render(scene, camera);
+        }
+        function run() {
+            const { torus } = draw;
+            const time = 5;
+            const allRange = 360;
+            let range = 1;
+            setInterval(function(){
+                torus.rotation.x = Math.PI * 2 / allRange * range;
+                drawTorus();
+                range = (range + 1) % allRange;
+            }, 1000 * time / allRange)
+        }
+
+        function run2() {
+            const { camera } = draw;
+            const time = 5;
+            const D = 20;
+            let per = -1;
+            let now = D;
+            setInterval(function() {
+                camera.position.set(now, now, now);
+                drawTorus();
+                now = now + per;
+                if(now === D) per = -1;
+                if(-1 * now === D) per = 1;
+            }, 1000 * time / D / 2);
+        }
+    </script>
+</body>
+</html>

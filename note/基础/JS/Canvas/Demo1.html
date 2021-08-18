@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Demo</title>
+    <style>
+        .canvas {
+            border: 1px solid #000000;
+            /* position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); */
+        }
+
+        .palyer-bar {
+            width: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="canvas" id="canvas" width="1000" height="600">
+        不支持canvas元素
+        <!-- 当浏览器不支持canvas时显示 -->
+    </canvas>
+    <canvas class="canvas" id="canvas2" width="1000" height="600">
+        不支持canvas元素
+        <!-- 当浏览器不支持canvas时显示 -->
+    </canvas>
+    <input class="palyer-bar" id="palyer-bar" type="range" min="0" max="1000">
+    <br />
+
+    <canvas class="canvas" id="solar" width="400" height="400">
+        不支持canvas元素
+        <!-- 当浏览器不支持canvas时显示 -->
+    </canvas>
+
+    <canvas class="canvas" id="clock" width="400" height="400">
+        不支持canvas元素
+        <!-- 当浏览器不支持canvas时显示 -->
+    </canvas>
+
+    <script>
+        /* https://blog.csdn.net/u012468376/article/details/73350998 */
+        function draw() {
+            // 获取canvas画布元素
+            const canvas = document.getElementById("canvas");
+            // 检测支持性
+            if(!canvas.getContext) return;
+            // 获取画笔（渲染上下文）
+            const ctx = canvas.getContext('2d');
+            // ctx.translate(100, 0);
+            
+            function drawRect() {
+                /*
+                    画布是一个XY坐标系，原点在画布左上角，向右和向下增加，grid网格布局
+                    矩形绘制：矩形
+                    api:
+                    ctx.fillRect(x, y, width, height) 在此区域绘制一个矩形
+                    ctx.strokeRect(x, y, width, height) 绘制此矩形区域的边框
+                    ctx.clearRect(x, y, width, height) 清除此矩形区域至透明
+                */
+                ctx.fillRect(20, 20, 100, 60);
+                ctx.strokeRect(140, 20, 100, 60);
+                ctx.clearRect(80, 0, 100, 60);
+            }
+
+            drawRect();
+            ctx.strokeRect(0, 0, 260, 100); // 内容区分
+
+            /*
+                路径：通过不同颜色和宽度的线段或曲线相连形成的不同形状的点的集合
+                一个路径或子路径都是闭合的
+                路径绘制图形的步骤：
+                1.创建路径起始点
+                2.调用绘制方法绘制路径
+                3.使路径闭合
+                4.通过描边或填充路径区域渲染图形
+            */
+            function drawLine() {
+                /*
+                    绘制线段
+                    api:
+                    ctx.beginPath() 创建一条路径，创建成功后，图形绘制命令会指向该路径
+                    ctx.moveTo(x, y) 将画笔移动至(x, y)，相当于设置路径的起始点
+                    ctx.lineTo(x, y) 绘制当前位置与(x, y)的直线
+                    ctx.closePath() 关闭路径，将图形的绘制命令指向上下文
+                    ctx.stroke() 描边，绘制图形的轮廓
+                    ctx.fill() 填充图形区域
+                */
+                // 绘制一个三角形
+                ctx.beginPath();
+                ctx.moveTo(20, 120);
+                ctx.lineTo(120, 120);
+                ctx.lineTo(20, 220);
+                // ctx.stroke(); // 会只绘制两条线段
+                ctx.closePath(); // 会自动连接到起点，形成第三条线段
+                ctx.stroke();
+                // 绘制一个菱形
+                ctx.beginPath();
+                ctx.moveTo(190, 120);
+                ctx.lineTo(140, 170);
+                ctx.lineTo(190, 220);
+                ctx.lineTo(240, 170);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            drawLine();
+            ctx.strokeRect(0, 100, 260, 140); // 内容模块
+
+            function drawArc() {
+                /*
+                    绘制圆弧：
+                    两个api：
+                    ctx.arc(x, y, r, startAngle, endAngle, anticlokwise)
+                    (x, y)为圆心, r为半径, startAngle开始弧度, endAngle结束弧度, anticlokwise是否为逆时针, 默认为false顺时针
+                    弧度：radians = (Math.PI/180)*degress // 角度转弧度
+                    ctx.arcTo(controlPointX, controlPointY, endPointX, endPointY, radius)
+                    (controlPointX, controlPointY)为控制点和(endPointX, endPointY)为结束点, radius为圆弧的半径，需要由moveTo确定画笔起始点
+                */
+                const radius = (degress) => (Math.PI/180)*degress;
+                // 绘制一个半圆
+                ctx.beginPath();
+                ctx.arc(20, 310, 50, radius(-90), radius(90));
+                ctx.closePath();
+                ctx.fill();
+                // 绘制一个1/4圆弧
+                ctx.beginPath();
+                ctx.moveTo(200, 260);
+                ctx.arcTo(100, 260, 100, 360, 100);
+                ctx.stroke();
+                ctx.closePath();
+                ctx.fillRect(200, 260, 5, 5);
+                ctx.fillText('起始点', 208, 260)
+                ctx.fillRect(100, 260, 5, 5);
+                ctx.fillText('控制点1', 108, 260)
+                ctx.fillRect(100, 360, 5, 5);
+                ctx.fillText('控制点2', 108, 360)
+                // arcTo绘制的圆弧有两条切线确定
+            }
+
+            drawArc();
+            ctx.strokeRect(0, 240, 260, 140); // 内容模块
+
+            function drawBezier() {
+                /*
+                    贝塞尔曲线
+                    quadraticCurveTo(controlPointX, controlPointY, endPointX, endPointY) 绘制二次贝塞尔曲线
+                    由moveTo确定画笔起始点, (controlPointX, controlPointY)为控制点, (endPointX, endPointY)为结束点
+                    bezierCurveTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, endPointX, endPointY) 三次贝塞尔曲线
+                    由moveTo确定画笔起始点, (controlPointX1, controlPointY1)和(controlPointX2, controlPointY2)为控制点, (endPointX, endPointY)为结束点
+                */
+                // 绘制二次贝塞尔曲线
+                ctx.beginPath();
+                ctx.moveTo(20, 480); // 确定起点
+                ctx.quadraticCurveTo(40, 390, 220, 480); // 确定控制点和结束点
+                ctx.stroke();
+                ctx.closePath();
+                // 绘制三次贝塞尔曲线
+                ctx.beginPath();
+                ctx.moveTo(20, 590);
+                ctx.bezierCurveTo(20, 500, 120, 500, 220, 590);
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            drawBezier();
+            ctx.strokeRect(0, 380, 260, 220); // 内容模块
+
+            /*
+                添加样式和颜色
+                ctx.fillStyle = color; 用来修改画笔填充颜色
+                ctx.strokeStyle = color; 用户修改画笔轮廓颜色
+            */
+            function drawColor({
+                initPoint = [0, 0],
+                count = 8,
+                rectLength = 30, // 8 * 30
+                initColor = [Math.floor(Math.random() * 31), Math.floor(Math.random() * 31), Math.floor(Math.random() * 255)],
+            } = {}) {
+                const colorIncreaseStep = 256 / count;
+                for(let i = 0; i < count; i++) {
+                    for(let j = 0; j < count; j++) {
+                        ctx.fillStyle = `rgb(${initColor[0] + i * colorIncreaseStep}, ${initColor[1] + j * colorIncreaseStep}, ${initColor[2]})`;
+                        // ctx.fillStyle = `rgba(${initColor[0] + i * colorIncreaseStep}, ${initColor[1] + j * colorIncreaseStep}, ${initColor[2]}, 1.0)`;
+                        ctx.fillRect(initPoint[0] + i * rectLength, initPoint[1] + j * rectLength, rectLength, rectLength);
+                    }
+                }
+            }
+
+            drawColor({
+                initPoint: [260, 0],
+                count: 256,
+                rectLength: 1,
+                initColor: [0, 0, 0]
+            });
+            drawColor({
+                initPoint: [516, 0],
+                count: 256,
+                rectLength: 1,
+                initColor: [0, 0, 127]
+            });
+            drawColor({
+                initPoint: [260, 256],
+                count: 256,
+                rectLength: 1,
+                initColor: [0, 0, 255]
+            });
+            drawColor({
+                initPoint: [516, 256],
+                count: 256,
+                rectLength: 1,
+                initColor: [0, 0, 63]
+            });
+
+            // ctx.globalAlpha用来设置全局透明度，可使用rgba代替
+
+            /*
+                ctx.lineWidth = width; 设置线宽
+                ctx.lineCap = type; 设置线条末端样式
+                butt 方形, round 圆形, square 方形，但是 宽度与线段相同，厚度为线段的一半
+                ctx.lineJoin = type; 设置线条连接处的样式
+                round 圆形, bevel 三角形， miter 菱形
+                虚线：
+                ctx.setLineDash([actualLength, gapLength]); 设置实际长度和间隙长度
+                ctx,lineDashOffset(offset); 设置其实偏移量
+                ctx.getLineDash(); 获取当前虚线样式，长度为非负偶数的数组
+            */
+
+            function drawText() {
+                /*
+                    绘制文本：
+                    ctx.fillText(text, x, y [, maxWidth]); 在指定位置填充文本
+                    ctx.strokeText(text, x, y [, maxWidth]); 在指定位置绘制文本边框
+                    文本样式：
+                    ctx.font = value; 文本样式，与CSS font一样
+                    ctx.textAlign = value; 文本对齐方式
+                    ctx.textBaseLine = value; 基线对齐方式
+                    ctx.direction = value; 文本方向
+                */
+            }
+
+
+        }
+        draw()
+
+        function draw2() {
+            const canvas = document.getElementById("canvas2")
+            if(!canvas.getContext) return;
+            const ctx = canvas.getContext("2d");
+            ctx.globalCompositeOperation = "copy";
+
+            function drawImg(imgURL = "./Demo.png", {
+                delay = 0,
+                onload = () => {},
+                onerror = () => {},
+            } = {}) {
+                /*
+                    ctx.drawImage(img or canvas, x, y) img为Image对象, (x, y)为图片绘制位置
+                    ctx.drawImage(img or canvas, x, y, width, height)
+                    ctx.drawImage(img or canvas, sliceX, sliceY, sliceWidth, sliceHeight, displayX, displayY, displayWidth, displayHeight) 截取图形部分显示
+                */
+                const img = new Image();
+                // 在图片加载后执行
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                    // ctx.drawImage(img, 0, 0, 500, 300, 500, 300, 500, 300);
+                    // ctx.drawImage(img, 500, 300, 500, 300, 0, 0, 500, 300);
+                    onload()
+                }
+                img.onerror = function() {
+                    console.log('error')
+                    onerror();
+                }
+                setTimeout(() => {
+                    img.src = imgURL;
+                }, delay)
+            }
+
+            const palyerBar = document.getElementById("palyer-bar");
+            let i = 0;
+            const timeInterval = setInterval(() => {
+                palyerBar.value = i;
+                const number = ("000" + i).slice(-3);
+                const imgURL = "./video/Demo " + number + ".png";
+                drawImg(imgURL, {
+                    onerror: () => {
+                        clearInterval(timeInterval);
+                    }
+                });
+                // ctx.clearRect(0, 0, 1000, 600)
+                i++;
+            }, 62.5)
+            // ctx.drawImage(document.getElementById("canvas"), 0, 0);
+        }
+        draw2();
+
+        /*
+            ctx.translate(x, y) 移动canvas的原点
+            ctx.rotate(radius) 顺时针弧度旋转坐标轴
+            ctx.scale(x, y) 分别对画布的X和Y坐标轴进行缩放
+            ctx.transform(a, b, c, d, e, f) 其中参数为变形矩阵
+            [a c e]
+            [b d f]
+            [0 0 1]
+
+            ctx.globalCompositeOperation = type; 设置绘制图形重叠部分的合成方式
+            其中type取值内容有13个，如下：
+            source-over: default, 新图形显示旧图形上方
+            source-in: 只显示图形之间重叠的新图形部分，其他部分透明
+            source-out: 显示新图形中未与旧图形重叠的部分
+            source-atop: 显示新图形与旧图形重叠部分，并且显示旧图形
+            destination-over: 新图形显示在旧图形下方
+            destination-in: 只显示图形之间重叠的旧图形部分，其他部分透明
+            destination-out: 显示旧图形中未与新图形重叠的部分
+            destination-atop: 显示新图形与旧图形重叠部分，并且显示新图形
+            lighter: 新旧图形都显示，重叠区域颜色相加
+            darken: 新旧图形都显示，重叠区域颜色为较小值
+            lighten: 新旧图形都显示，重叠区域颜色为较大值
+            xor: 新旧图形都显示，重叠区域透明
+            copy: 只显示新图形
+
+            ctx.clip() 用刚创建的路径来裁剪图像
+        */
+
+        function drawSolar() {
+            // 绘制太阳系
+            const canvas = document.getElementById("solar");
+            if(!canvas.getContext) return;
+            const {width, height} = canvas;
+            const minLength = Math.min(width, height);
+            const ctx = canvas.getContext("2d");
+            
+            function run() {
+                ctx.save();
+                ctx.fillRect(0, 0, width, height);
+
+                // 定义太阳半径
+                const sunRadius = minLength / 20;
+                // 定义地球围绕太阳转动轨道半径
+                const earthRunSunRadius = minLength / 3;
+                // 定义地球半径
+                const earthRadius = minLength / 30;
+                // 定义月亮围绕地球转动轨道半径
+                const moonRunEarthRadius = minLength / 16;
+                // 定义月亮半径
+                const moonRadius = minLength / 200;
+                // 暂定地球公转周期为6分钟，精确到毫秒
+                const earthRotationPeriod = 6;
+                // 月亮公转周期为1000毫秒
+                const moonRotationPeriod = 1000;
+
+                // 移动原点
+                ctx.translate(width / 2, height / 2)
+                // 画太阳
+                ctx.beginPath();
+                ctx.arc(0, 0, sunRadius, 0, 2*Math.PI);
+                ctx.closePath();
+                ctx.fillStyle = "yellow";
+                ctx.fill();
+
+                // // 画环太阳轨道
+                // ctx.beginPath();
+                // ctx.arc(0, 0, earthRunSunRadius, 0, 2*Math.PI);
+                // ctx.closePath();
+                // ctx.strokeStyle = "white";
+                // ctx.stroke();
+
+                // 旋转坐标系
+                const time = new Date();
+                ctx.rotate(2 * Math.PI * ( time.getMinutes() % earthRotationPeriod + time.getSeconds() / 60 + time.getMilliseconds() / 60000 ) / earthRotationPeriod);
+                // 移动原点
+                ctx.translate(earthRunSunRadius, 0);
+                // 画地球
+                ctx.beginPath();
+                ctx.arc(0, 0, earthRadius, 0, 2*Math.PI);
+                ctx.closePath();
+                ctx.fillStyle = "blue";
+                ctx.fill();
+
+                // // 画环地球轨道
+                // ctx.beginPath();
+                // ctx.arc(0, 0, moonRunEarthRadius, 0, 2*Math.PI);
+                // ctx.closePath();
+                // ctx.strokeStyle = "gray";
+                // ctx.stroke();
+
+                // 旋转坐标系
+                ctx.rotate(2 * Math.PI * time.getMilliseconds() / moonRotationPeriod);
+                ctx.translate(moonRunEarthRadius, 0);
+                ctx.beginPath();
+                ctx.arc(0, 0, moonRadius, 0, 2*Math.PI);
+                ctx.closePath();
+                ctx.fillStyle = "white";
+                ctx.fill();
+
+
+                ctx.restore();
+                requestAnimationFrame(run);
+            }
+
+            requestAnimationFrame(run);
+        }
+
+        drawSolar();
+
+        function drawClock() {
+            const canvas = document.getElementById("clock");
+            const {width, height} = canvas;
+            const minLength = Math.min(width, height);
+            if(!canvas.getContext) return;
+            const ctx = canvas.getContext("2d");
+
+            function run() {
+                ctx.save();
+                ctx.fillRect(0, 0, width, height);
+
+                const now = new Date(); // 精确到毫秒
+                const [hour, minute, second, millisecond] = [now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()];
+                // console.log('hour, minute, second, millisecond', hour, minute, second, millisecond)
+                const dialRadius = minLength * 3 / 8;
+                const dial = {
+                    radius: minLength * 3 / 8, // 表盘半径
+                    length: minLength / 12, // 表盘刻度宽度
+                    width: minLength / 80,// 表盘刻度高度
+                    scale: 1.2,
+                }
+
+                ctx.translate(width / 2, height / 2);
+                // 绘制表盘
+                ctx.save();
+                for(let i = 0; i < 60; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(dial.radius, 0);
+                    ctx.lineTo(dial.radius + dial.length, 0);
+                    ctx.lineWidth = dial.width * (i%5 === 0 ? dial.scale : 1);
+                    ctx.strokeStyle = i%5 === 0 ? 'red' : 'blue';
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.rotate(2 * Math.PI / 60);
+                }
+                ctx.restore();
+                // 绘制文字
+                ctx.fillStyle = "white";
+                const textDistance = dial.radius + dial.length + 12;
+                [3,4,5,6,7,8,9,10,11,12,1,2].forEach((num, i) => {
+                    const angle = 2 * Math.PI / 12 * i;
+                    ctx.fillText(num, textDistance * Math.cos(angle), textDistance * Math.sin(angle));
+                });
+
+                // 绘制秒针
+                ctx.save();
+                ctx.rotate(2 * Math.PI * (second + millisecond / 1000) / 60 - Math.PI / 2);
+                ctx.beginPath()
+                ctx.moveTo(-1 * dial.radius / 3, 0);
+                ctx.lineTo(dial.radius, 0);
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "blue";
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+
+                // 绘制分针
+                ctx.save();
+                ctx.rotate(2 * Math.PI * (minute + second / 60 + millisecond / 60 / 1000) / 60 - Math.PI / 2);
+                ctx.beginPath()
+                ctx.moveTo(-1 * dial.radius / 5, 0);
+                ctx.lineTo(dial.radius * 2 / 3, 0);
+                ctx.lineWidth = 5;
+                ctx.lineCap = "round";
+                ctx.strokeStyle = "red";
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+
+                // 绘制时针
+                ctx.save();
+                ctx.rotate(2 * Math.PI * (hour % 12 + minute / 60 + second / 60 / 60 + millisecond / 60 / 60 / 1000) / 12  - Math.PI / 2);
+                ctx.beginPath()
+                ctx.moveTo(-1 * dial.radius / 10, 0);
+                ctx.lineTo(dial.radius * 2 / 4, 0);
+                ctx.lineWidth = 7;
+                ctx.lineCap = "round";
+                ctx.strokeStyle = "orange";
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+
+                ctx.restore();
+                requestAnimationFrame(run);
+            }
+            requestAnimationFrame(run);
+        }
+        drawClock();
+    </script>
+</body>
+</html>

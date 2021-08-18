@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player</title>
+    <style>
+        .player {
+            border: 1px solid #000000;
+        }
+        .player-bar {
+            width: 950px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="player" class="player" width="1000" height="600">
+        不支持canvas元素
+    </canvas>
+    <input id="player-bar" class="player-bar" type="range" min="0" max="950" />
+    <script>
+        const imgCount = 950;
+        const imgURL = (i) => "./video/Demo " + ("000" + i).slice(-3) + ".png";
+        function createPlayer(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas.getContext) return;
+            const {width, height} = canvas;
+            const ctx = canvas.getContext("2d");
+            ctx.globalCompositeOperation = "copy";
+
+            function drawImage(i, {
+                onload = () => {},
+                onerror = () => {},
+            } = {}) {
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                    onload();
+                }
+                img.onerror = onerror;
+                i && (img.src = imgURL(i));
+            }
+
+            let timeInterval = null;
+            function player(i = 0, {
+                delay = 60,
+                onchange = () => {}
+            } = {}) {
+                timeInterval && clearInterval(timeInterval);
+                timeInterval = setInterval(() => {
+                    drawImage(i, {
+                        onerror: () => {
+                            clearInterval(timeInterval);
+                            player(0, {delay, onchange});
+                        },
+                    })
+                    i++;
+                    onchange(i);
+                }, delay)
+            }
+
+            player.clear = () => {
+                clearInterval(timeInterval);
+            }
+
+            return player;
+        }
+        const player = createPlayer("player");
+        const playerBar = document.getElementById("player-bar");
+        function play(val) {
+            player(val, {
+            onchange: (i) => {
+                playerBar.value = i;
+            }
+        });
+        }
+        playerBar.addEventListener("change", (event) => {
+            player.clear();
+            console.log('change', playerBar.value);
+            play(playerBar.value);
+        })
+        play(0)
+    </script>
+</body>
+</html>

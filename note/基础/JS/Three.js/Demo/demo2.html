@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Demo2</title>
+    <script src="../js/three.js" type="text/javascript"></script>
+</head>
+<body onload="init()">
+    <canvas id="sphere" width="400" height="300"></canvas>
+    <canvas id="torus" width="400" height="300"></canvas>
+    <canvas id="torus-knot" width="400" height="300"></canvas>
+    <canvas id="text" width="400" height="300"></canvas>
+    <canvas id="geometry" width="400" height="300"></canvas>
+    <script>
+        function init() {
+            draw();
+        }
+        function draw() {
+            drawTorus();
+            drawSphere();
+            drawTorusKnot();
+            drawText("hello");
+            drawGeometry();
+        }
+
+        // 绘制球体
+        function drawSphere() {
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById("sphere")
+            });
+            renderer.setClearColor(0x000000);
+
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.OrthographicCamera(-20, 20, 15, -15, 1, 100)
+            camera.position.set(50, 50, 50);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+
+            const sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(10, 24, 24),
+                new THREE.MeshBasicMaterial({
+                    color: 0xff0000,
+                    wireframe: true
+                })
+            );
+            scene.add(sphere);
+
+            renderer.render(scene, camera);
+        }
+
+        // 绘制圆环
+        function drawTorus() {
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById("torus")
+            });
+            renderer.setClearColor(0x000000);
+
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.OrthographicCamera(-6, 6, 4.5, -4.5, 1, 100);
+            camera.position.set(20, 20, 20);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+            scene.add(camera);
+
+            // 绘制 圆环
+            const torus = new THREE.Mesh(
+                new THREE.TorusGeometry(3, 1, 12, 18),
+                new THREE.MeshBasicMaterial({
+                    color: 0xff0000,
+                    wireframe: true
+                })
+            );
+            scene.add(torus);
+
+            renderer.render(scene, camera);
+
+        }
+
+        // 绘制圆环结
+        function drawTorusKnot() {
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById("torus-knot")
+            });
+            renderer.setClearColor(0x000000);
+
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.OrthographicCamera(-20, 20, 15, -15, 1, 100);
+            camera.position.set(50, 50, 50);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+
+            const torusKnot = new THREE.Mesh(
+                new THREE.TorusKnotGeometry(8, 1),
+                new THREE.MeshBasicMaterial({
+                    color: 0xff0000,
+                    wireframe: true
+                })
+            );
+            scene.add(torusKnot);
+
+            renderer.render(scene, camera);
+        }
+
+        // 绘制文字
+        function drawText(text) {
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById("text")
+            });
+            renderer.setClearColor(0x000000);
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-20, 20, 15, -15, 1, 100);
+            camera.position.set(10, 20, 30);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+
+            const loader = new THREE.FontLoader();
+            loader.load("./assets/helvetiker_regular.typeface.json", function(font) {
+                const textMesh = new THREE.Mesh(
+                    new THREE.TextGeometry(text, {
+                        font,
+                        size: 6,
+                        height: 1,
+                    }),
+                    new THREE.MeshBasicMaterial({
+                        color: 0xff0000,
+                        wireframe: true
+                    })
+                );
+                scene.add(textMesh);
+
+                renderer.render(scene, camera);
+            });
+        }
+
+        // 绘制自定义形状
+        function drawGeometry() {
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById("geometry")
+            });
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-20, 20, 15, -15, 1, 100);
+            camera.position.set(50, 50, 50);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+
+            const geometry = new THREE.Geometry();
+            // 插入顶点
+            geometry.vertices.push(new THREE.Vector3(-8, 0, 0));
+            geometry.vertices.push(new THREE.Vector3(0, 4, 0));
+            geometry.vertices.push(new THREE.Vector3(0, 0, -4));
+            geometry.vertices.push(new THREE.Vector3(0, -4, 0));
+            geometry.vertices.push(new THREE.Vector3(0, 0, 4));
+            geometry.vertices.push(new THREE.Vector3(15, 0, 0));
+            // 插入面
+            geometry.faces.push(new THREE.Face3(0, 1, 2));
+            geometry.faces.push(new THREE.Face3(0, 2, 3));
+            geometry.faces.push(new THREE.Face3(0, 3, 4));
+            geometry.faces.push(new THREE.Face3(0, 1, 4));
+            geometry.faces.push(new THREE.Face3(5, 1, 2));
+            geometry.faces.push(new THREE.Face3(5, 2, 3));
+            geometry.faces.push(new THREE.Face3(5, 3, 4));
+            geometry.faces.push(new THREE.Face3(5, 1, 4));
+
+            const geometryMesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
+
+            scene.add(geometryMesh);
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>

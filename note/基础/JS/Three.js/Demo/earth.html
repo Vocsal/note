@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Demo Earth</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script src="../js/three.js" type="text/javascript"></script>
+    <script src="../js/OrbitControls.js" type="text/javascript"></script>
+</head>
+<body onload="init()">
+    <script>
+        var renderer, scene, camera, controls, earth;
+        const radius = 6731;
+        function init() {
+            renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(0x000000);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 50, 1e7);
+            // camera = new THREE.OrthographicCamera(-1 * window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -1 * window.innerHeight / 2, 1, 1000);
+            camera.position.z = radius * 5;
+            // camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+
+            scene.add(new THREE.AxesHelper(1e8));
+
+
+            const ambientLightDraw = new THREE.AmbientLight();
+            scene.add(ambientLightDraw);
+
+            // const directionalLight = new THREE.DirectionalLight();
+            // directionalLight.position.set( - 1, 0, 1 ).normalize();
+            // scene.add(directionalLight);
+
+            addControl();
+
+            drawEarth();
+
+            // renderer.render(scene, camera);
+            run();
+        }
+
+        function addControl() {
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.autoRotate = true; // 自旋
+            controls.enableDamping = true; // 阻尼
+            controls.listenToKeyEvents(window); // 按键
+        }
+
+        function drawEarth() {
+            const sphere = new THREE.SphereGeometry(radius, 100, 100);
+			const textureLoader = new THREE.TextureLoader();
+            const material = new THREE.MeshPhongMaterial({
+                specular: 0x333333,
+                shininess: 15,
+                map: textureLoader.load("./assets/planets/earth_atmos_2048.jpg"),
+                specularMap: textureLoader.load( "./assets/planets/earth_specular_2048.jpg" ),
+                normalMap: textureLoader.load( "./assets/planets/earth_normal_2048.jpg" ),
+                normalScale: new THREE.Vector2( 0.85, - 0.85 ),
+            })
+            earth = new THREE.Mesh(sphere, material);
+            // earth.rotation.y = Math.PI - 0.3;
+            // earth.rotation.x = 0.6;
+            scene.add(earth);
+        }
+
+        function run() {
+            debugger
+            console.log('this', this)
+            controls && controls.update();
+            renderer.render(scene, camera);
+            requestAnimationFrame(run);
+        }
+    </script>
+</body>
+</html>

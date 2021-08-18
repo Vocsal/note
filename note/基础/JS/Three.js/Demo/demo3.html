@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Demo</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <script src="../js/three.js" type="text/javascript"></script>
+    <script src="../js/stats.min.js" type="text/javascript"></script>
+</head>
+<body onload="init()">
+    <script>
+        function init() {
+            appendStats();
+            threeJsInit();
+            draw();
+        }
+        function appendStats() {
+            stat = new Stats();
+            document.body.appendChild(stat.domElement);
+        }
+        function threeJsInit() {
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(400, 300);
+            document.body.appendChild(renderer.domElement);
+            scene = new THREE.Scene();
+            camera = new THREE.OrthographicCamera(-20, 20, 15, -15, 1, 100);
+            camera.position.set(50, 50, 50);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            torus = new THREE.Mesh(
+                new THREE.TorusGeometry(10, 3, 12, 18),
+                new THREE.MeshBasicMaterial({
+                    color: 0xffff00,
+                    wireframe: true
+                })
+            )
+            scene.add(torus);
+        }
+        const time = 5;
+        const range = 360;
+        let ss = 0;
+        function draw() {
+            setInterval(() => {
+                stat.begin();
+                ss = (ss + 1) % range;
+                torus.rotation.x = Math.PI * 2 / range * ss;
+                renderer.render(scene, camera);
+                stat.end();
+            }, time * 1000 / range);
+        }
+    </script>
+</body>
+</html>
