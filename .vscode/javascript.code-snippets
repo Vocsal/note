@@ -1,5 +1,5 @@
 {
-	// Place your note 工作区 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// Place your 全局 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
 	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
 	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
 	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
@@ -15,17 +15,44 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
-	"Print to console": {
-		"scope": "javascript",
+	"Print value to console": {
+		"scope": "javascript,typescript",
 		"prefix": "log",
+		"body": [
+            "console.log(${1:$CLIPBOARD}$0)"
+		],
+		"description": "console.log"
+    },
+
+    "Print string to console": {
+		"scope": "javascript,typescript",
+		"prefix": "logs",
+		"body": [
+            "console.log('${1:$CLIPBOARD}$0')"
+		],
+		"description": "console.log"
+    },
+
+    "Print string and value to console": {
+		"scope": "javascript,typescript",
+		"prefix": "logg",
 		"body": [
             "console.log('${1:$CLIPBOARD}$0', ${2:$CLIPBOARD})"
 		],
 		"description": "console.log"
     },
 
+    "Print to console": {
+		"scope": "javascript,typescript",
+		"prefix": "loggg",
+		"body": [
+            "console.log($0)"
+		],
+		"description": "console.log"
+    },
+
     "Debounce": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js debounce",
         "body": [
             "/**",
@@ -48,7 +75,7 @@
     },
 
     "Throttle": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js throttle",
         "body": [
             "/**",
@@ -72,7 +99,7 @@
     },
 
     "Id": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js id",
         "body": [
             "/**",
@@ -99,7 +126,7 @@
     },
 
     "Conver Date": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js convertDate",
         "body": [
             "/**",
@@ -121,7 +148,7 @@
     },
 
     "Conver Time": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js converTime",
         "body": [
             "/**",
@@ -162,7 +189,7 @@
     },
 
     "Get Type": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js getType",
         "body": [
             "function getType(val) {",
@@ -173,7 +200,7 @@
     },
 
     "Deep Clone": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js deepClone",
         "body": [
             "/**",
@@ -207,7 +234,7 @@
     },
 
     "Notify": {
-        "scope": "javascript",
+        "scope": "javascript,typescript",
         "prefix": "js notify",
         "body": [
             "/**",
